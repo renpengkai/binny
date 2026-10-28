@@ -353,7 +353,7 @@ function emptyTrash() {
   alert.addButtonWithTitle('清空')
   alert.addButtonWithTitle('取消')
   alert.buttons.objectAtIndex(0).setHasDestructiveAction(true)
-  if (alert.runModal !== 1000) return
+  if (Number(alert.runModal()) !== 1000) return
   const text = runFinder(`
 tell application "Finder"
     set oldWarn to warns before emptying of trash
@@ -457,7 +457,8 @@ function fillMenu(menu) {
   menu.removeAllItems
   function add(title, action) {
     const item = $.NSMenuItem.alloc.initWithTitleActionKeyEquivalent(title, action, '')
-    item.setTarget(actions)
+    // 必须绑到 ObjC 实例；绑到普通 JS 对象时菜单能展开，点了没反应
+    item.setTarget(actions.obj)
     menu.addItem(item)
     return item
   }
